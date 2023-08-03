@@ -60,7 +60,8 @@ function draw(e) {
     }
 } Array.from(document.getElementById(`colors`).children).forEach(color => {
     color.onclick = function() {
-        penColor = this.style.backgroundColor;
+        penColor = this.style.backgroundColor
+        thicknessSlider.style.accentColor = penColor
         this.style.border = `4px solid ${penColor == `black` ? `red` : `black`}`
         Array.from(this.parentElement.children).forEach(child => {
             if (child != color) child.style.border = ``
