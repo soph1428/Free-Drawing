@@ -80,7 +80,7 @@ function draw(e) {
         if (name != null && name.replaceAll(` `, ``) == ``) alert(`That is not a valid name.`)
         else {
             if (confirm(`You already have a drawing with that name. Do you want to replace it with this drawing?`) == true) {
-                deleteBtn.click()
+                if (deleteBtn) deleteBtn.click()
                 saveDrawingData(localStorage.getItem(`drawings`).replace(localStorage.getItem(`drawings`).split(`, `).find(str => str.includes(`${name}*`)).split(`*`)[1], rename ? rename.src : canvas.toDataURL()))
                 return
             }
