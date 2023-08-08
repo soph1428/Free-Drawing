@@ -2,9 +2,8 @@ var canvas = document.querySelector(`canvas`),
 ctx = canvas.getContext(`2d`),
 thicknessSlider = document.getElementById(`thicknessSlider`),
 savedDrawings = document.getElementById(`savedDrawings`),
-penColor = `black`,
-penThickness = thicknessSlider.value,
-mouseDown = false
+penColor = `black`, penThickness = thicknessSlider.value,
+mouseDown = false, strokes = [], currentStrokeIndex = -1
 function updateDrawings() {
     Array.from(savedDrawings.children).forEach(elem => {if (elem.tagName == `DIV`) elem.remove()})
     localStorage.getItem(`drawings`).split(`, `).filter(str => str != ``).forEach(str => {
@@ -44,8 +43,10 @@ thicknessSlider.oninput = function() {
 }; canvas.ontouchstart = canvas.onmousedown
 canvas.onmousemove = draw
 canvas.ontouchmove = canvas.onmousemove
-canvas.onmouseup = function() {mouseDown = false}
-canvas.onmouseout = canvas.onmouseup
+canvas.addEventListener(`mouseup`, e => {
+    e.stopImmediatePropagation()
+    mouseDown = false, currentStrokeIndex++, addStroke()
+}); canvas.onmouseout = canvas.onmouseup
 canvas.ontouchend = canvas.onmouseup
 canvas.ontouchcancel = canvas.onmouseup
 function draw(e) {
@@ -89,4 +90,22 @@ function draw(e) {
 } function saveDrawingData(data) {
     localStorage.setItem(`drawings`, data)
     updateDrawings()
-}
+} function undo() {currentStrokeIndex--
+    var undoImage = new Image(),
+    undoImageSrc = strokes[currentStrokeIndex]
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    if (!undoImageSrc) return
+    undoImage.src = undoImageSrc
+    undoImage.onload = function() {
+        ctx.drawImage(undoImage, 0, 0)
+    }
+} function redo() {currentStrokeIndex++
+    var redoImage = new Image(),
+    redoImageSrc = strokes[currentStrokeIndex]
+    if (!redoImageSrc) return
+    redoImage.src = redoImageSrc
+    redoImage.onload = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(redoImage, 0, 0)
+    }
+} function addStroke() {strokes.splice(currentStrokeIndex, 0, canvas.toDataURL())}
