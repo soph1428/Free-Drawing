@@ -47,6 +47,7 @@ function selectColor(color) {
 
 function saveColor(savedAlready) {
     var savedColorsArr = Array.from(savedColors.children)
+    if (eraserButton.style.border.includes(`0, 0, 0`)) return
     if (savedColorsArr.find(color => color.style.backgroundColor == penColor)) {
         return alert("You already have that color saved!");
     } var newColor = document.createElement(`span`)
